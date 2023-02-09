@@ -96,6 +96,7 @@ public class UsersControllerTest {
         mockMvc.perform(put(BASE_URL + "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
+
                 .andExpect(status().isOk());
 
         verify(usersService, times(1)).save(user);

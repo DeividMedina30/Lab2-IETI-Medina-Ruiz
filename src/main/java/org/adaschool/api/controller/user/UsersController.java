@@ -25,10 +25,17 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser() {
+    public ResponseEntity<User> createUser(@RequestBody UserDto userDto) {
         //TODO implement this method
-        URI createdUserUri = URI.create("");
-        return ResponseEntity.created(createdUserUri).body(null);
+        User user =new User(userDto);
+        usersService.save(user);
+        try{
+            return new ResponseEntity<User>( user, HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+
     }
 
     @GetMapping
@@ -59,9 +66,14 @@ public class UsersController {
         throw new UserNotFoundException(id);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteUser() {
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) {
         //TODO implement this method
-        return ResponseEntity.ok().build();
+        Optional<User> usuaroExistente = usersService.findById(id);
+        if (!usuaroExistente.isEmpty()){
+            usersService.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        throw new UserNotFoundException(id);
     }
 }
